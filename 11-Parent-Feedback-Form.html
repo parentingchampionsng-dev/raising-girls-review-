@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raising Girls — Parent Check-In</title>
+<style>
+  :root{
+    --red:#F44032; --yellow:#F6DA53; --ink:#1A1A1A;
+    --tint:#FFF3F1; --sun:#FFFAE8; --mute:#7C7C7C; --rule:#E5DCD8;
+    --cream:#FDF8F4;
+    --display:Georgia,"Times New Roman",serif;
+    --body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --util:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:var(--body);font-size:17px;line-height:1.6;color:var(--ink);background:var(--cream)}
+  .shell{max-width:640px;margin:0 auto;padding:0 20px}
+
+  /* ---------- masthead ---------- */
+  header{background:var(--red);color:#fff;padding:34px 0 30px}
+  header .kick{font-family:var(--util);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+      color:var(--yellow);margin:0 0 12px}
+  header h1{font-family:var(--display);font-size:38px;font-weight:400;margin:0 0 12px;line-height:1.12}
+  header p{margin:0;color:#FFE0DC;font-size:16.5px;max-width:46ch}
+  .rule{height:9px;background:var(--yellow)}
+  .ticks{display:flex;gap:6px;align-items:center;margin-top:24px;font-family:var(--util);
+      font-size:12px;color:#FFD3CD;letter-spacing:.06em}
+  .ticks i{display:block;width:5px;height:24px;border-radius:3px;background:rgba(255,255,255,.34)}
+  .ticks i.on{background:var(--yellow)}
+
+  /* ---------- card ---------- */
+  main{padding:34px 0 90px}
+  .card{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:30px 26px;
+      box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .eyebrow{font-family:var(--util);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+      color:var(--red);margin:0 0 12px;font-weight:700}
+  h2{font-family:var(--display);font-size:29px;font-weight:400;margin:0 0 14px;line-height:1.2;
+      border:2.5px solid var(--ink);border-radius:3px;padding:10px 14px;display:inline-block}
+  .intro{margin:0 0 8px;font-size:17px}
+  .fine{font-size:14.5px;color:var(--mute);margin:14px 0 0}
+  .req{color:var(--red)}
+
+  .step{display:none}.step.on{display:block;animation:in .3s ease both}
+  @keyframes in{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+  @media(prefers-reduced-motion:reduce){.step.on{animation:none}}
+
+  fieldset{border:0;margin:0 0 26px;padding:0}
+  legend{font-family:var(--display);font-size:19px;margin:0 0 6px;padding:0;line-height:1.3}
+  .help{font-size:14.5px;color:var(--mute);margin:0 0 11px}
+
+  input[type=text],input[type=email],input[type=tel],textarea{
+      width:100%;font-family:var(--body);font-size:16.5px;padding:13px 14px;
+      border:1.5px solid var(--rule);border-radius:9px;background:#fff;color:var(--ink)}
+  textarea{min-height:104px;resize:vertical;line-height:1.55}
+  input:focus,textarea:focus{outline:0;border-color:var(--red);box-shadow:0 0 0 3px var(--tint)}
+
+  .opts{display:grid;gap:8px}
+  .opt{display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--rule);border-radius:10px;
+      padding:13px 15px;background:#fff;cursor:pointer;font-size:16.5px;line-height:1.45}
+  .opt:hover{border-color:var(--red)}
+  .opt input{accent-color:var(--red);width:19px;height:19px;flex:0 0 19px;margin-top:2px}
+  .opt.sel{border-color:var(--red);background:var(--tint)}
+
+  .grid-q{border:1px solid var(--rule);border-radius:11px;overflow:hidden;margin-top:6px}
+  .grid-row{padding:13px 15px;border-bottom:1px solid #F2EBE8}
+  .grid-row:last-child{border-bottom:0}
+  .grid-row p{margin:0 0 8px;font-size:16px}
+  .scale{display:flex;gap:6px;flex-wrap:wrap}
+  .scale button{flex:1 1 auto;min-width:64px;font-family:var(--body);font-size:13px;padding:8px 6px;
+      border:1.5px solid var(--rule);border-radius:8px;background:#fff;cursor:pointer;color:var(--ink);line-height:1.25}
+  .scale button[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff;font-weight:600}
+
+  .flag{background:var(--sun);border:2px solid var(--yellow);border-radius:11px;padding:16px 18px;margin:0 0 22px}
+  .flag b{font-family:var(--display);font-size:18px;display:block;margin-bottom:4px}
+  .flag p{margin:0;font-size:15.5px}
+
+  .nav{display:flex;gap:11px;align-items:center;margin-top:28px;flex-wrap:wrap}
+  .btn{background:var(--ink);color:#fff;border:0;border-radius:10px;padding:15px 28px;
+      font-family:var(--body);font-size:17px;font-weight:600;cursor:pointer}
+  .btn:hover{background:#000}
+  .btn.go{background:var(--red)}.btn.go:hover{background:#d8341f}
+  .btn.ghost{background:none;color:var(--ink);border:1.5px solid var(--rule);font-weight:500}
+  .err{color:var(--red);font-size:15px;margin:14px 0 0;display:none}
+  .err.on{display:block}
+
+  .thanks{text-align:center;padding:14px 0}
+  .thanks .mk{width:70px;height:70px;border-radius:50%;background:var(--red);color:#fff;
+      display:grid;place-items:center;font-size:33px;margin:0 auto 20px}
+  .thanks h2{border:0;padding:0;display:block;font-size:31px}
+  footer{text-align:center;font-size:14px;color:var(--mute);padding:0 0 40px}
+  @media(max-width:520px){
+    header h1{font-size:30px}h2{font-size:24px}.card{padding:24px 18px}
+    body{font-size:16px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="shell">
+    <p class="kick">Raising Girls · 2026</p>
+    <h1>Parent Check-In</h1>
+    <p>About five minutes. What you write here shapes the last four months of the year.</p>
+    <div class="ticks" id="ticks"><i class="on"></i><i></i><i></i><i></i><i></i><span id="tickLabel">Before we begin</span></div>
+  </div>
+</header>
+<div class="rule"></div>
+
+<main><div class="shell">
+
+<!-- ============ WELCOME ============ -->
+<section class="step on" id="s0"><div class="card">
+  <p class="eyebrow">Welcome</p>
+  <h2>We swapped the live session for this</h2>
+  <p class="intro">We had planned to get on a call with you this week. This is instead of that — because what you type here is more useful to us than anything we would have said to you.</p>
+  <p class="intro">Tell us what has changed for your daughter, however small. And tell us honestly where we have not helped. We would rather know.</p>
+  <p class="fine">Fields marked <span class="req">*</span> are required — everything else is optional.</p>
+  <div class="nav"><button class="btn" id="start">Start</button></div>
+</div></section>
+
+<!-- ============ 1 ============ -->
+<section class="step" id="s1"><div class="card">
+  <p class="eyebrow">Section 1 of 5</p>
+  <h2>About you</h2>
+  <fieldset><legend>Your name <span class="req">*</span></legend>
+    <input type="text" id="q_name"></fieldset>
+  <fieldset><legend>Your email address <span class="req">*</span></legend>
+    <input type="email" id="q_email"></fieldset>
+  <fieldset><legend>Your WhatsApp number <span class="req">*</span></legend>
+    <p class="help">Include the country code.</p>
+    <input type="tel" id="q_phone"></fieldset>
+  <fieldset><legend>How many of your daughters are on the Squad? <span class="req">*</span></legend>
+    <div class="opts" data-radio="q_count"></div></fieldset>
+  <fieldset><legend>Her name <span class="req">*</span></legend>
+    <p class="help">First name is enough.</p>
+    <input type="text" id="q_child1"></fieldset>
+  <fieldset id="child2Block" style="display:none"><legend>Your second daughter's name <span class="req">*</span></legend>
+    <input type="text" id="q_child2"></fieldset>
+  <fieldset id="child3Block" style="display:none"><legend>Your third daughter's name <span class="req">*</span></legend>
+    <input type="text" id="q_child3"></fieldset>
+  <fieldset><legend>Which age group is she in? <span class="req">*</span></legend>
+    <p class="help">Tick all that apply if you have more than one daughter with us.</p>
+    <div class="opts" data-check="q_age"></div></fieldset>
+  <fieldset><legend>How long has she been with us? <span class="req">*</span></legend>
+    <div class="opts" data-radio="q_length"></div></fieldset>
+  <p class="err" id="e1">Please answer the questions marked with a star.</p>
+</div></section>
+
+<!-- ============ 2 ============ -->
+<section class="step" id="s2"><div class="card">
+  <p class="eyebrow">Section 2 of 5</p>
+  <h2>Where you started</h2>
+  <p class="intro">Think back to when you first enrolled her.</p>
+  <fieldset style="margin-top:24px"><legend>What was on your mind then? <span class="req">*</span></legend>
+    <p class="help">Tick everything that was true.</p>
+    <div class="opts" data-check="q_worry"></div></fieldset>
+  <fieldset><legend>Tell us in your own words what you hoped we would help with.</legend>
+    <textarea id="q_hoped"></textarea></fieldset>
+  <p class="err" id="e2">Please tick at least one.</p>
+</div></section>
+
+<!-- ============ 3 ============ -->
+<section class="step" id="s3"><div class="card">
+  <p class="eyebrow">Section 3 of 5</p>
+  <h2>What has changed</h2>
+  <fieldset style="margin-top:24px"><legend>Have you noticed any change in what you described? <span class="req">*</span></legend>
+    <div class="opts" data-radio="q_changed"></div></fieldset>
+  <fieldset><legend>What is working? <span class="req">*</span></legend>
+    <p class="help">What are we doing that you would not want us to stop?</p>
+    <textarea id="q_working"></textarea></fieldset>
+  <fieldset><legend>What improvement have you seen in her? <span class="req">*</span></legend>
+    <p class="help">In the thing you were worried about. A sentence she said. Something she did without being asked. Something you noticed and did not expect. Small is fine — small is what we are looking for.</p>
+    <textarea id="q_change"></textarea></fieldset>
+  <fieldset><legend>What has she gained since joining the Squad? <span class="req">*</span></legend>
+    <p class="help">Anything at all — whether or not it was what you came for.</p>
+    <div class="opts" data-check="q_gains"></div></fieldset>
+  <fieldset><legend>Tell us about one of them.</legend>
+    <p class="help">The story behind the tick. This is what we use when we talk about what the Squad actually does.</p>
+    <textarea id="q_gainStory"></textarea></fieldset>
+  <fieldset><legend>Rate what you have seen this year</legend>
+    <div class="grid-q" id="ratings"></div></fieldset>
+  <fieldset><legend>Which parts has she enjoyed most?</legend>
+    <div class="opts" data-check="q_enjoy"></div></fieldset>
+  <p class="err" id="e3">Please answer the questions marked with a star.</p>
+</div></section>
+
+<!-- ============ 4 ============ -->
+<section class="step" id="s4"><div class="card">
+  <p class="eyebrow">Section 4 of 5</p>
+  <h2>Where we have not helped enough</h2>
+  <div class="flag" style="margin-top:22px">
+    <b>This is the part we most want you to answer.</b>
+    <p>Please be blunt. Nothing here will offend us, and nothing you write will affect how your daughter is treated.</p>
+  </div>
+  <fieldset><legend>What is the headache you still have? <span class="req">*</span></legend>
+    <p class="help">The thing about raising her that still keeps you up, or wears you down, or comes back every week. It does not have to be something you think we could fix.</p>
+    <textarea id="q_headache"></textarea></fieldset>
+  <fieldset><legend>Is there something you really wish we could do something about?</legend>
+    <p class="help">Even if it sounds like a lot to ask.</p>
+    <textarea id="q_wish"></textarea></fieldset>
+  <fieldset><legend>What aspect of raising your daughter remains untouched by what we do?</legend>
+    <p class="help">Where do you still feel on your own?</p>
+    <textarea id="q_untouched"></textarea></fieldset>
+  <fieldset><legend>What would you most want help with in the next four months? <span class="req">*</span></legend>
+    <div class="opts" data-check="q_want"></div></fieldset>
+  <fieldset><legend>If we could do one thing differently for her, what would it be?</legend>
+    <textarea id="q_different"></textarea></fieldset>
+  <p class="err" id="e4">Please answer the questions marked with a star.</p>
+</div></section>
+
+<!-- ============ 5 ============ -->
+<section class="step" id="s5"><div class="card">
+  <p class="eyebrow">Section 5 of 5</p>
+  <h2>The last quarter</h2>
+  <p class="intro">We have four months left in 2026, and we are planning them around these answers.</p>
+  <fieldset style="margin-top:24px"><legend>Would you like someone to reach out to you about anything specific? <span class="req">*</span></legend>
+    <div class="opts" data-radio="q_reach"></div></fieldset>
+  <div id="reachBlock" style="display:none">
+    <fieldset><legend>What would you like us to reach out about? <span class="req">*</span></legend>
+      <textarea id="q_reachWhat"></textarea></fieldset>
+    <fieldset><legend>Best time to reach you</legend>
+      <input type="text" id="q_reachWhen"></fieldset>
+  </div>
+  <fieldset><legend>May we share your daughter's progress as a story? <span class="req">*</span></legend>
+    <div class="opts" data-radio="q_story"></div></fieldset>
+  <p class="err" id="e5">Please answer the questions marked with a star.</p>
+</div></section>
+
+<!-- ============ DONE ============ -->
+<section class="step" id="s6"><div class="card thanks">
+  <div class="mk">✓</div>
+  <h2>Thank you. That is genuinely useful.</h2>
+  <p class="intro" style="max-width:44ch;margin:14px auto 0">We are planning the last four months of 2026 this week, and what you have written goes into that planning — particularly what you told us we have not reached yet.</p>
+  <p class="intro" style="max-width:44ch;margin:14px auto 0">We will come back to you with what we changed because of it.</p>
+</div></section>
+
+<div class="nav" id="nav" style="display:none">
+  <button class="btn ghost" id="prev">Back</button>
+  <button class="btn go" id="next">Continue</button>
+</div>
+
+</div></main>
+<footer>Raising Girls · Parent Check-In · #Raising10over10Girls</footer>
+
+<script>
+const OPTS={
+ q_count:["Just one","Two","Three or more"],
+ q_age:["3–5","6–8","9–11","12–14","15–17"],
+ q_length:["Less than 6 months","6–12 months","1–2 years","More than 2 years"],
+ q_worry:["Low confidence or shyness","Difficulty making or keeping friends","Screen and phone habits",
+   "Talking back or disrespect","Study habits and focus","How she feels about her body or appearance",
+   "Little interest in faith","Big emotions — anger, tears, shutting down",
+   "Safety and knowing her boundaries","Comparing herself to other girls","No clear goals or direction",
+   "Nothing specific — I wanted her in a good community"],
+ q_changed:["Yes, clearly","Yes, slightly","Not yet","Too early to say"],
+ q_gains:["She is more confident","She speaks up more","She reads more",
+   "She learned a new skill","She made new friends","She sets goals for herself",
+   "She started something of her own","She takes her faith more seriously",
+   "She handles disappointment better","She is easier at home",
+   "She takes school more seriously","She earned money from something she made or did",
+   "Nothing I can point to yet"],
+ q_enjoy:["Live sessions","Bible study and reading","Courses on the platform","Mentoring calls",
+   "Talent community","Reading challenges","Monthly quizzes","Being around the other girls"],
+ q_want:["Helping her set and keep goals","Talking to her about difficult things",
+   "Her friendships and peer pressure","Her confidence","Screen and phone habits",
+   "Preparing her for exams or the next school stage","Helping her start something of her own",
+   "Her faith","Supporting me as a parent, not just her"],
+ q_reach:["Yes, please","No, thank you"],
+ q_story:["Yes, with her name","Yes, but keep us anonymous","No"]
+};
+const RATE_ROWS=["Her confidence","Her faith","Her attitude at home","Her focus on schoolwork",
+  "Her friendships","How she handles being upset","Her sense of who she is"];
+const RATE_COLS=["Worse","No change","A little better","Clearly better","Too early"];
+const answers={};
+
+document.querySelectorAll('[data-radio]').forEach(el=>{
+  const k=el.dataset.radio;
+  el.innerHTML=OPTS[k].map(o=>
+    `<label class="opt"><input type="radio" name="${k}" value="${o}"><span>${o}</span></label>`).join('');
+  el.querySelectorAll('input').forEach(i=>i.onchange=()=>{
+    el.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+    i.closest('.opt').classList.add('sel'); answers[k]=i.value;
+    if(k==='q_reach') document.getElementById('reachBlock').style.display=
+      (i.value==='Yes, please')?'block':'none';
+    if(k==='q_count'){
+      document.getElementById('child2Block').style.display=
+        (i.value==='Two'||i.value==='Three or more')?'block':'none';
+      document.getElementById('child3Block').style.display=
+        (i.value==='Three or more')?'block':'none';
+    }
+  });
+});
+document.querySelectorAll('[data-check]').forEach(el=>{
+  const k=el.dataset.check; answers[k]=[];
+  const list=OPTS[k].concat(['Other']);
+  el.innerHTML=list.map(o=>
+    `<label class="opt"><input type="checkbox" value="${o}"><span>${o}</span></label>`).join('')+
+    `<input type="text" placeholder="If other, tell us" style="display:none" data-other="${k}">`;
+  el.querySelectorAll('input[type=checkbox]').forEach(i=>i.onchange=()=>{
+    i.closest('.opt').classList.toggle('sel',i.checked);
+    answers[k]=[...el.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value);
+    if(i.value==='Other') el.querySelector('[data-other]').style.display=i.checked?'block':'none';
+  });
+});
+document.getElementById('ratings').innerHTML=RATE_ROWS.map((r,ri)=>
+  `<div class="grid-row"><p>${r}</p><div class="scale" data-r="${ri}">
+    ${RATE_COLS.map(c=>`<button type="button" aria-pressed="false">${c}</button>`).join('')}</div></div>`).join('');
+document.querySelectorAll('.scale').forEach(sc=>{
+  sc.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    sc.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed','false'));
+    b.setAttribute('aria-pressed','true');
+    answers['rating_'+RATE_ROWS[sc.dataset.r]]=b.textContent;
+  });
+});
+
+let step=0;
+const LABELS=["Before we begin","About you","Where you started","What has changed",
+  "Where we have not helped","The last quarter","Done"];
+const val=id=>document.getElementById(id).value.trim();
+
+function valid(s){
+  if(s===1){
+    if(!(val('q_name')&&val('q_email').includes('@')&&val('q_phone')
+      &&answers.q_count&&val('q_child1')&&(answers.q_age||[]).length&&answers.q_length)) return false;
+    if((answers.q_count==='Two'||answers.q_count==='Three or more')&&!val('q_child2')) return false;
+    if(answers.q_count==='Three or more'&&!val('q_child3')) return false;
+    return true;
+  }
+  if(s===2) return (answers.q_worry||[]).length;
+  if(s===3) return answers.q_changed&&val('q_working')&&val('q_change')
+    &&(answers.q_gains||[]).length;
+  if(s===4) return val('q_headache')&&(answers.q_want||[]).length;
+  if(s===5) return answers.q_reach&&answers.q_story&&
+    (answers.q_reach!=='Yes, please'||val('q_reachWhat'));
+  return true;
+}
+function show(s){
+  step=s;
+  document.querySelectorAll('.step').forEach(x=>x.classList.remove('on'));
+  document.getElementById('s'+s).classList.add('on');
+  document.getElementById('nav').style.display=(s===0||s===6)?'none':'flex';
+  document.getElementById('prev').style.display=s>1?'inline-block':'none';
+  document.getElementById('next').textContent=s===5?'Send my answers':'Continue';
+  const t=document.querySelectorAll('#ticks i');
+  t.forEach((i,n)=>i.classList.toggle('on',n<Math.max(s,1)));
+  document.getElementById('tickLabel').textContent=LABELS[s];
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.getElementById('start').onclick=()=>show(1);
+document.getElementById('prev').onclick=()=>show(step-1);
+document.getElementById('next').onclick=()=>{
+  const e=document.getElementById('e'+step);
+  if(!valid(step)){ if(e) e.classList.add('on'); return; }
+  if(e) e.classList.remove('on');
+  if(step===5){
+    // In the Apps Script build this is where google.script.run.submitResponse(answers) goes.
+    show(6);
+  } else show(step+1);
+};
+</script>
+</body>
+</html>

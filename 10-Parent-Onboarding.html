@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raising Girls — Your onboarding</title>
+<style>
+  :root{
+    --red:#F44032; --yellow:#F6DA53; --ink:#1A1A1A;
+    --tint:#FFF3F1; --sun:#FFFAE8; --mute:#8A8A8A; --rule:#EADFDB; --soft:#FBF7F6;
+    --display:ui-rounded,"SF Pro Rounded","Segoe UI Variable Display","Trebuchet MS",system-ui,sans-serif;
+    --body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --util:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--body);font-size:16px;line-height:1.55;color:var(--ink);background:var(--soft)}
+  .shell{max-width:780px;margin:0 auto;padding:0 18px 80px}
+
+  .top{background:var(--red);color:#fff;padding:22px 0 24px}
+  .top b{font-family:var(--display);font-size:19px;font-weight:800}
+  .top .demo{background:var(--yellow);color:var(--ink);font-family:var(--util);font-size:10px;
+      letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border-radius:3px;font-weight:700;margin-left:10px}
+  .hero{display:flex;align-items:center;gap:22px;margin-top:20px;flex-wrap:wrap}
+  .dial{width:96px;height:96px;border-radius:50%;flex:0 0 96px;display:grid;place-items:center;
+      background:conic-gradient(var(--yellow) var(--p,0deg), rgba(255,255,255,.22) 0);transition:--p .5s}
+  .dial span{width:74px;height:74px;border-radius:50%;background:var(--red);display:grid;place-items:center;
+      font-family:var(--display);font-size:21px;font-weight:800}
+  .hero h1{font-family:var(--display);font-size:25px;font-weight:800;margin:0 0 4px;letter-spacing:-.3px}
+  .hero p{margin:0;color:#FFE3DF;font-size:15px}
+
+  .nudge{background:var(--sun);border:2px solid var(--yellow);border-radius:11px;padding:15px 17px;
+      margin:26px 0 0;font-size:15px}
+  .nudge b{font-family:var(--display)}
+  .nudge.hide{display:none}
+
+  h2{font-family:var(--display);font-size:19px;font-weight:800;margin:34px 0 4px}
+  .sub{margin:0 0 14px;color:var(--mute);font-size:14.5px}
+
+  .task{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1.5px solid var(--rule);
+      border-radius:10px;padding:15px;margin-bottom:9px;width:100%;text-align:left;cursor:pointer;
+      font-family:var(--body);font-size:16px;color:var(--ink)}
+  .task:hover{border-color:var(--red)}
+  .task .box{width:22px;height:22px;border-radius:6px;border:2px solid var(--rule);flex:0 0 22px;
+      display:grid;place-items:center;color:#fff;font-size:13px;margin-top:1px}
+  .task.done{background:#fff;border-color:var(--rule)}
+  .task.done .box{background:var(--red);border-color:var(--red)}
+  .task.done b{color:var(--mute);text-decoration:line-through;text-decoration-color:var(--rule)}
+  .task .t{flex:1}
+  .task b{font-family:var(--display);font-size:16px;display:block}
+  .task p{margin:2px 0 0;font-size:14px;color:#5a5a5a}
+  .task .go{font-family:var(--util);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--red);font-weight:700;white-space:nowrap;padding-top:4px}
+  .task.done .go{color:var(--mute)}
+
+  .panel{background:#fff;border:1px solid var(--rule);border-radius:11px;padding:20px;margin-bottom:14px}
+  .panel h3{font-family:var(--display);font-size:17px;margin:0 0 6px}
+  .panel .k{font-family:var(--util);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+      color:var(--mute);margin:0 0 3px}
+  label.q{display:block;font-family:var(--display);font-size:15.5px;font-weight:700;margin:18px 0 7px}
+  textarea,select{width:100%;font-family:var(--body);font-size:15px;padding:10px 12px;
+      border:1.5px solid var(--rule);border-radius:8px;background:#fff;color:var(--ink)}
+  textarea{min-height:70px;resize:vertical}
+  .scale{display:flex;gap:7px;margin-top:6px;flex-wrap:wrap}
+  .scale button{width:40px;height:34px;border-radius:7px;border:1.5px solid var(--rule);background:#fff;
+      cursor:pointer;font-family:var(--util);font-size:13px;color:var(--ink)}
+  .scale button[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff;font-weight:700}
+  .btn{background:var(--red);color:#fff;border:0;border-radius:9px;padding:12px 22px;
+      font-family:var(--body);font-size:15.5px;font-weight:600;cursor:pointer;margin-top:18px}
+  .btn:hover{background:#d8341f}
+  .saved{color:var(--red);font-size:14px;margin-left:10px}
+
+  /* her plan */
+  .locked{border:1.5px dashed var(--rule);border-radius:11px;padding:22px;text-align:center;color:var(--mute);
+      background:#fff}
+  .locked b{font-family:var(--display);color:var(--ink);display:block;font-size:16px;margin-bottom:4px}
+  .plan .goal{margin-bottom:14px}
+  .plan .gt{display:flex;justify-content:space-between;gap:10px;font-size:15px;margin-bottom:5px}
+  .bar{height:8px;background:#F1E9E7;border-radius:5px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--red);border-radius:5px}
+  .ask{background:var(--sun);border-radius:9px;padding:14px;margin-top:14px;font-size:14.5px}
+  .ask b{font-family:var(--display);display:block;margin-bottom:6px}
+  .ask label{display:flex;gap:10px;align-items:center;padding:5px 0;cursor:pointer}
+  .ask input{accent-color:var(--red);width:17px;height:17px}
+
+  footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--rule);font-size:13px;color:var(--mute)}
+  @media(max-width:600px){.hero{gap:16px}.hero h1{font-size:21px}}
+</style>
+</head>
+<body>
+
+<div class="top"><div class="shell">
+  <b>Raising Girls</b><span class="demo">Demo · sample data</span>
+  <div class="hero">
+    <div class="dial" id="dial"><span id="pct">0%</span></div>
+    <div>
+      <h1>Welcome, Mrs Okafor</h1>
+      <p id="heroSub">Adaeze is enrolled for 2027. A few things left to set up.</p>
+    </div>
+  </div>
+</div></div>
+
+<div class="shell">
+
+  <div class="nudge" id="nudge">
+    <b>You have unfinished business.</b> <span id="nudgeText"></span> We will send one reminder on Sunday and then leave you alone — but January runs more smoothly when this is done.
+  </div>
+
+  <h2>Set up</h2>
+  <p class="sub">Tick as you go. You can leave and come back — nothing is lost.</p>
+  <div id="tasks"></div>
+
+  <h2>Tell us about her</h2>
+  <p class="sub">Her mentor reads this before the first call. She answers her own version separately, and we compare the two.</p>
+  <div class="panel">
+    <p class="k">Parent back end</p>
+    <h3>Six questions, about five minutes</h3>
+    <label class="q">What would you most like to see change for her this year?</label>
+    <textarea placeholder="One or two sentences is plenty."></textarea>
+    <label class="q">What does she get into trouble for at home?</label>
+    <textarea placeholder="Be honest — this is not shared with her."></textarea>
+    <label class="q">She finishes what she starts</label>
+    <div class="scale" data-g="finish"></div>
+    <label class="q">She is confident speaking in front of people</label>
+    <div class="scale" data-g="confident"></div>
+    <label class="q">How much time can you give to supporting her plan each week?</label>
+    <select><option>A few minutes most days</option><option>Two or three short check-ins</option>
+      <option>Once a week</option><option>Honestly, very little — I work long hours</option></select>
+    <label class="q">How would you like reminders?</label>
+    <select><option>WhatsApp</option><option>Email on Sundays</option><option>Both</option><option>Neither</option></select>
+    <button class="btn" id="saveBack">Save my answers</button><span class="saved" id="backMsg"></span>
+  </div>
+
+  <h2>Her plan</h2>
+  <p class="sub">This fills in once her mentor has met her.</p>
+  <div id="planWrap">
+    <div class="locked" id="locked">
+      <b>Not yet — her mentor is assigned in December</b>
+      Once they have met and agreed a plan, it appears here. You will see what she is working on, and what you can help with.
+      <br><br><button class="btn" id="preview">Preview what this will look like</button>
+    </div>
+  </div>
+
+  <footer>Demo only. The parent, girl, goals and progress on this page are invented for illustration.</footer>
+</div>
+
+<script>
+const TASKS=[
+ ["Join the parents' WhatsApp group","Where announcements actually reach you.","Join",1],
+ ["Watch the orientation video","Eleven minutes. How the year works.","Watch",1],
+ ["Download the 2027 calendar","Every live session, challenge and deadline.","Download",1],
+ ["Download her Bible reading plan","Her age group reads 4 books a month.","Download",0],
+ ["Choose her talent community","Photography, art, AI, data, advocacy or entrepreneurship.","Choose",0],
+ ["Answer the questions about her","Below on this page. Her mentor reads it first.","Start",0],
+ ["Confirm her age group and details","Takes thirty seconds.","Confirm",1],
+ ["Set how you want reminders","WhatsApp, email, or neither.","Set",0]
+];
+let state=TASKS.map(t=>t[3]);
+
+function paint(){
+  document.getElementById('tasks').innerHTML=TASKS.map(([t,d,g],i)=>
+   `<button class="task${state[i]?' done':''}" data-i="${i}">
+      <span class="box">${state[i]?'✓':''}</span>
+      <span class="t"><b>${t}</b><p>${d}</p></span>
+      <span class="go">${state[i]?'Done':g}</span></button>`).join('');
+  document.querySelectorAll('.task').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i; state[i]=state[i]?0:1; paint();
+  });
+  const done=state.filter(Boolean).length, total=state.length;
+  const pct=Math.round(done/total*100);
+  document.getElementById('pct').textContent=pct+'%';
+  document.getElementById('dial').style.setProperty('--p',(pct*3.6)+'deg');
+  document.getElementById('dial').style.background=
+    `conic-gradient(var(--yellow) ${pct*3.6}deg, rgba(255,255,255,.22) 0)`;
+  const left=total-done;
+  document.getElementById('heroSub').textContent= left===0
+    ? 'Adaeze is enrolled for 2027. Everything is set up.'
+    : `Adaeze is enrolled for 2027. ${left} thing${left>1?'s':''} left to set up.`;
+  const n=document.getElementById('nudge');
+  if(left===0){ n.classList.add('hide'); }
+  else{
+    n.classList.remove('hide');
+    const names=TASKS.filter((t,i)=>!state[i]).map(t=>t[0].toLowerCase());
+    document.getElementById('nudgeText').textContent=
+      'Still to do: '+names.slice(0,3).join(', ')+(names.length>3?`, and ${names.length-3} more.`:'.');
+  }
+}
+paint();
+
+document.querySelectorAll('.scale').forEach(sc=>{
+  sc.innerHTML=[1,2,3,4,5].map(n=>`<button aria-pressed="false">${n}</button>`).join('');
+  sc.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    sc.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed','false'));
+    b.setAttribute('aria-pressed','true');
+  });
+});
+
+document.getElementById('saveBack').onclick=()=>{
+  const m=document.getElementById('backMsg');
+  m.textContent='Saved. You can change any of this later.';
+  setTimeout(()=>m.textContent='',5000);
+};
+
+document.getElementById('preview').onclick=()=>{
+  document.getElementById('planWrap').innerHTML=`
+   <div class="panel plan">
+     <p class="k">Agreed 12 January with Ngozi E.</p>
+     <h3>What Adaeze is working on</h3>
+     <div class="goal"><div class="gt"><b>Take and show 5 photographs on one subject</b><span>2 of 5</span></div>
+       <div class="bar"><i style="width:40%"></i></div></div>
+     <div class="goal"><div class="gt"><b>Read 4 books of the Bible each month</b><span>Feb: 3 of 4</span></div>
+       <div class="bar"><i style="width:70%"></i></div></div>
+     <div class="goal"><div class="gt"><b>Speak once in front of a group unprompted</b><span>not started</span></div>
+       <div class="bar"><i style="width:0%"></i></div></div>
+     <div class="ask">
+       <b>What we are asking of you this month</b>
+       <label><input type="checkbox" checked> Two check-in evenings agreed with her mentor</label>
+       <label><input type="checkbox" checked> Saw her working on the photographs</label>
+       <label><input type="checkbox"> She read at family devotion once</label>
+       <label><input type="checkbox" checked> Phone rule discussed at home</label>
+     </div>
+     <p style="margin:14px 0 0;font-size:14px;color:var(--mute)">You see that check-ins happened, and what she agreed to. You do not see what she said in them — that is hers.</p>
+   </div>`;
+};
+</script>
+</body>
+</html>

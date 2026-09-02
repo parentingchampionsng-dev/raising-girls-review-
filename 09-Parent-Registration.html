@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raising Girls — Register your daughter</title>
+<style>
+  :root{
+    --red:#F44032; --yellow:#F6DA53; --ink:#1A1A1A; --paper:#fff;
+    --tint:#FFF3F1; --sun:#FFFAE8; --mute:#8A8A8A; --rule:#EADFDB; --soft:#FBF7F6;
+    --display:ui-rounded,"SF Pro Rounded","Segoe UI Variable Display","Trebuchet MS",system-ui,sans-serif;
+    --body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --util:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--body);font-size:16px;line-height:1.55;color:var(--ink);background:var(--soft)}
+  .shell{max-width:660px;margin:0 auto;padding:0 18px 80px}
+
+  .top{background:var(--red);color:#fff;padding:20px 0 0}
+  .top .shell{padding-bottom:0}
+  .top b{font-family:var(--display);font-size:19px;font-weight:800}
+  .top .demo{background:var(--yellow);color:var(--ink);font-family:var(--util);font-size:10px;
+      letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border-radius:3px;font-weight:700;margin-left:10px}
+  .prog{height:5px;background:rgba(0,0,0,.16);margin-top:16px;border-radius:3px;overflow:hidden}
+  .prog i{display:block;height:100%;background:var(--yellow);width:20%;transition:width .45s ease}
+  .stepnum{font-family:var(--util);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+      color:#FFD9D4;padding:9px 0 16px;display:block}
+
+  main{padding-top:32px}
+  h1{font-family:var(--display);font-size:27px;font-weight:800;margin:0 0 8px;letter-spacing:-.4px}
+  .lede{margin:0 0 24px;color:#4a4a4a}
+  .step{display:none}.step.on{display:block;animation:rise .3s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @media(prefers-reduced-motion:reduce){.step.on{animation:none}}
+
+  label.q{display:block;font-family:var(--display);font-size:16.5px;font-weight:700;margin:22px 0 9px}
+  .hint{font-size:13.5px;color:var(--mute);margin:-5px 0 9px}
+  .opts{display:grid;gap:8px}
+  .opt{display:flex;align-items:center;gap:11px;border:1.5px solid var(--rule);border-radius:9px;
+      padding:12px 14px;background:#fff;cursor:pointer;font-size:15.5px}
+  .opt:hover{border-color:var(--red)}
+  .opt input{accent-color:var(--red);width:17px;height:17px;flex:0 0 17px}
+  .opt.sel{border-color:var(--red);background:var(--tint)}
+  input[type=text],input[type=email],input[type=tel]{width:100%;font-family:var(--body);font-size:15.5px;
+      padding:11px 13px;border:1.5px solid var(--rule);border-radius:9px;background:#fff}
+
+  /* tiers */
+  .tier{border:1.5px solid var(--rule);border-radius:11px;background:#fff;padding:16px;margin-bottom:10px;
+      cursor:pointer;display:block}
+  .tier:hover{border-color:var(--red)}
+  .tier.sel{border-color:var(--red);border-width:2.5px;background:var(--tint)}
+  .tier .th{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .tier b{font-family:var(--display);font-size:17.5px}
+  .tier .pr{font-family:var(--display);font-size:19px;font-weight:800;color:var(--red);white-space:nowrap}
+  .tier ul{margin:9px 0 0;padding-left:17px;font-size:14px;color:#555}
+  .tier li{margin-bottom:3px}
+  .tier .best{font-family:var(--util);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+      background:var(--yellow);color:var(--ink);padding:3px 8px;border-radius:3px;font-weight:700;
+      display:inline-block;margin-bottom:7px}
+
+  .total{background:var(--sun);border:2px solid var(--yellow);border-radius:11px;padding:18px;margin:22px 0}
+  .total .line{display:flex;justify-content:space-between;padding:6px 0;font-size:15px}
+  .total .line.sum{border-top:1.5px solid #E3CE72;margin-top:8px;padding-top:12px;
+      font-family:var(--display);font-size:21px;font-weight:800}
+  .pay{background:#fff;border:1px solid var(--rule);border-radius:11px;padding:18px;margin-bottom:18px}
+  .pay dt{font-size:12.5px;color:var(--mute);margin-top:10px}
+  .pay dd{margin:2px 0 0;font-family:var(--util);font-size:16px;font-weight:600}
+  .pay dl{margin:0}
+
+  .nav{display:flex;gap:10px;margin-top:28px;align-items:center;flex-wrap:wrap}
+  .btn{background:var(--red);color:#fff;border:0;border-radius:9px;padding:13px 24px;
+      font-family:var(--body);font-size:16px;font-weight:600;cursor:pointer}
+  .btn:hover{background:#d8341f}
+  .btn.ghost{background:none;color:var(--red);border:1.5px solid var(--red)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .later{font-size:13.5px;color:var(--mute);margin-left:auto}
+  .later a{color:var(--red)}
+
+  .done{text-align:center;padding:20px 0}
+  .done .mark{width:64px;height:64px;border-radius:50%;background:var(--red);color:#fff;
+      display:grid;place-items:center;font-size:31px;margin:0 auto 18px}
+  .card{background:#fff;border:1px solid var(--rule);border-radius:11px;padding:18px;text-align:left;margin-top:16px}
+  .card h3{font-family:var(--display);font-size:16px;margin:0 0 8px}
+  .card ol{margin:0;padding-left:19px;font-size:15px}.card li{margin-bottom:5px}
+
+  .note{background:var(--tint);border-left:4px solid var(--red);padding:13px 15px;
+      border-radius:0 8px 8px 0;font-size:14px;margin:26px 0 0}
+  footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--rule);font-size:13px;color:var(--mute)}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="shell">
+    <b>Raising Girls</b><span class="demo">Demo · sample prices</span>
+    <div class="prog"><i id="bar"></i></div>
+    <span class="stepnum" id="stepnum">Step 1 of 5</span>
+  </div>
+</div>
+
+<div class="shell"><main>
+
+<!-- 1 -->
+<section class="step on" id="s1">
+  <h1>Let's start with your daughter</h1>
+  <p class="lede">Four questions. You will see exactly what applies to her, and nothing that doesn't.</p>
+  <label class="q">How old is she?</label>
+  <div class="opts" id="age"></div>
+  <label class="q">Is this her first year with us?</label>
+  <div class="opts" id="ret"></div>
+  <label class="q">How many daughters are you enrolling?</label>
+  <div class="opts" id="cnt"></div>
+</section>
+
+<!-- 2 -->
+<section class="step" id="s2">
+  <h1>Choose how she joins</h1>
+  <p class="lede" id="ageEcho">Three ways in. You can move up later in the year, but not down.</p>
+  <div id="tiers"></div>
+</section>
+
+<!-- 3 -->
+<section class="step" id="s3">
+  <h1>Would you like the printed books as well?</h1>
+  <p class="lede">Everything in the Digital Library is included already. This is the physical set, delivered.</p>
+  <div class="opts" id="books"></div>
+  <label class="q">Where should we deliver?</label>
+  <input type="text" id="addr" placeholder="City or area — we will confirm the rest by WhatsApp">
+</section>
+
+<!-- 4 -->
+<section class="step" id="s4">
+  <h1>Your total</h1>
+  <p class="lede">Nothing is charged automatically. You pay by transfer, then tell us you have paid.</p>
+  <div class="total" id="total"></div>
+  <div class="pay">
+    <h3 style="font-family:var(--display);margin:0 0 4px;font-size:16px">Pay into</h3>
+    <dl><dt>Bank</dt><dd>Sample Bank Plc</dd>
+        <dt>Account name</dt><dd>Raising Girls Ltd</dd>
+        <dt>Account number</dt><dd>0000000000</dd>
+        <dt>Use this reference</dt><dd id="ref">RG27-0000</dd></dl>
+  </div>
+  <label class="q">Your details</label>
+  <input type="text" id="pname" placeholder="Your full name" style="margin-bottom:9px">
+  <input type="email" id="pmail" placeholder="Email address" style="margin-bottom:9px">
+  <input type="tel" id="pphone" placeholder="WhatsApp number, with country code">
+</section>
+
+<!-- 5 -->
+<section class="step" id="s5">
+  <div class="done">
+    <div class="mark">✓</div>
+    <h1>That's her place held</h1>
+    <p class="lede" style="max-width:44ch;margin:0 auto 4px">We are checking the transfer now. Your confirmation email is on its way — it has every link you need in one place.</p>
+    <div class="card">
+      <h3>What happens next</h3>
+      <ol>
+        <li>An email with your onboarding link, within the hour.</li>
+        <li>You tick through five short things — the WhatsApp group, the orientation video, the calendar, the Bible plan, and her talent community.</li>
+        <li>You answer a few questions about her, so her mentor arrives already knowing something.</li>
+        <li>If anything is left unticked, we will nudge you. Nobody should reach January saying they did not know.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<div class="nav" id="nav">
+  <button class="btn ghost" id="prev" style="display:none">Back</button>
+  <button class="btn" id="next">Continue</button>
+  <span class="later">Not ready? <a href="#" id="save">Save and come back</a></span>
+</div>
+
+<div class="note" id="savedNote" style="display:none">
+  <strong>Saved.</strong> We have your answers so far. A link is on its way to your email — open it and you will land exactly here, not back at the beginning. If you do not come back, we will send one reminder and then leave you alone.
+</div>
+
+<footer>Demo only. Prices, bank details and reference numbers on this page are invented for illustration. Actual 2027 pricing is set at the retreat.</footer>
+</main></div>
+
+<script>
+const PRICE={books:15000, squad:40000, mentor:75000, printed:9000};
+const state={age:null,ret:null,cnt:1,tier:null,books:null,step:1};
+
+function radios(el,name,items,cb){
+  el.innerHTML=items.map((t,i)=>
+   `<label class="opt"><input type="radio" name="${name}" value="${i}"><span>${t}</span></label>`).join('');
+  el.querySelectorAll('input').forEach(inp=>inp.onchange=()=>{
+    el.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+    inp.closest('.opt').classList.add('sel');
+    cb(items[inp.value], +inp.value); check();
+  });
+}
+radios(document.getElementById('age'),'age',
+  ["3 to 5","6 to 8","9 to 11","12 to 14","15 to 17"],v=>state.age=v);
+radios(document.getElementById('ret'),'ret',
+  ["Yes, this is her first year","No, she was with us before"],v=>state.ret=v);
+radios(document.getElementById('cnt'),'cnt',
+  ["Just one","Two","Three or more"],(v,i)=>state.cnt=i+1);
+radios(document.getElementById('books'),'books',
+  ["Yes, send the printed set","No, the digital library is enough"],(v,i)=>state.books=(i===0));
+
+const TIERS=[
+ ["books","Books only", PRICE.books, false,
+  ["The full Digital Library","April reading challenge","Summer reading challenge"]],
+ ["squad","Squad", PRICE.squad, true,
+  ["Everything in Books only","Courses and monthly quizzes","Bible Live and monthly Bible reading",
+   "Leadership Live","Talent courses and live sessions","All five challenges — July, August, body safety, self-esteem, evangelism"]],
+ ["mentor","Squad with a mentor", PRICE.mentor, false,
+  ["Everything in Squad","Her own mentor for the year","Check-ins twice a month",
+   "Onboarding, her long-term vision and 2027 goals","A dashboard you can see too"]]
+];
+document.getElementById('tiers').innerHTML=TIERS.map(([k,n,p,best,f])=>
+ `<label class="tier" data-k="${k}">
+   ${best?'<span class="best">Most families choose this</span>':''}
+   <span class="th"><b>${n}</b><span class="pr">₦${p.toLocaleString()}</span></span>
+   <ul>${f.map(x=>`<li>${x}</li>`).join('')}</ul></label>`).join('');
+document.querySelectorAll('.tier').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tier').forEach(x=>x.classList.remove('sel'));
+  t.classList.add('sel'); state.tier=t.dataset.k; check();
+});
+
+function tierName(k){return TIERS.find(t=>t[0]===k)[1];}
+function tierPrice(k){return TIERS.find(t=>t[0]===k)[2];}
+
+function paintTotal(){
+  const base=tierPrice(state.tier)*state.cnt;
+  const bk=state.books?PRICE.printed*state.cnt:0;
+  const lines=[[`${tierName(state.tier)} × ${state.cnt}`,base]];
+  if(bk) lines.push([`Printed book set × ${state.cnt}`,bk]);
+  document.getElementById('total').innerHTML=
+   lines.map(([l,v])=>`<div class="line"><span>${l}</span><span>₦${v.toLocaleString()}</span></div>`).join('')+
+   `<div class="line sum"><span>Total</span><span>₦${(base+bk).toLocaleString()}</span></div>`;
+  document.getElementById('ref').textContent='RG27-'+Math.floor(1000+Math.random()*8999);
+}
+
+function check(){
+  const n=document.getElementById('next');
+  const ok={1:state.age&&state.ret&&state.cnt,2:state.tier,3:state.books!==null,4:true,5:true}[state.step];
+  n.disabled=!ok;
+}
+function go(s){
+  state.step=s;
+  document.querySelectorAll('.step').forEach(x=>x.classList.remove('on'));
+  document.getElementById('s'+s).classList.add('on');
+  document.getElementById('bar').style.width=(s*20)+'%';
+  document.getElementById('stepnum').textContent='Step '+s+' of 5';
+  document.getElementById('prev').style.display=(s>1&&s<5)?'inline-block':'none';
+  document.getElementById('next').textContent=s===4?'I have paid':'Continue';
+  document.getElementById('nav').style.display=s===5?'none':'flex';
+  if(s===2&&state.age)
+    document.getElementById('ageEcho').textContent=
+      `For a girl aged ${state.age}. You can move up later in the year, but not down.`;
+  if(s===4) paintTotal();
+  check(); window.scrollTo({top:0,behavior:'smooth'});
+}
+document.getElementById('next').onclick=()=>go(Math.min(state.step+1,5));
+document.getElementById('prev').onclick=()=>go(Math.max(state.step-1,1));
+document.getElementById('save').onclick=e=>{
+  e.preventDefault();
+  document.getElementById('savedNote').style.display='block';
+  document.getElementById('savedNote').scrollIntoView({behavior:'smooth',block:'center'});
+};
+check();
+</script>
+</body>
+</html>

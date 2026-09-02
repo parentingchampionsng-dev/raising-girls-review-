@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raising Girls — Mentor Platform</title>
+<style>
+  :root{
+    --red:#F44032; --yellow:#F6DA53; --ink:#1A1A1A; --paper:#fff;
+    --tint:#FFF3F1; --sun:#FFFAE8; --mute:#8A8A8A; --rule:#EADFDB; --soft:#FBF7F6;
+    --display:ui-rounded,"SF Pro Rounded","Segoe UI Variable Display","Trebuchet MS",system-ui,sans-serif;
+    --body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --util:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--body);font-size:15px;line-height:1.55;color:var(--ink);background:var(--soft)}
+  .app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+
+  /* --- sidebar --- */
+  aside{background:var(--red);color:#fff;padding:22px 0;display:flex;flex-direction:column}
+  aside .brand{padding:0 22px 20px;border-bottom:1px solid rgba(255,255,255,.22)}
+  aside .brand b{font-family:var(--display);font-size:17px;font-weight:800;display:block}
+  aside .brand span{font-family:var(--util);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+        color:var(--yellow);display:block;margin-top:3px}
+  nav{padding:16px 0;flex:1}
+  nav button{display:block;width:100%;text-align:left;background:none;border:0;color:#FFD9D4;
+        font-family:var(--body);font-size:14.5px;padding:10px 22px;cursor:pointer;border-left:4px solid transparent}
+  nav button[aria-current="true"]{background:rgba(0,0,0,.13);color:#fff;font-weight:600;border-left-color:var(--yellow)}
+  nav button:focus-visible{outline:2px solid var(--yellow);outline-offset:-2px}
+  aside .who{padding:16px 22px 0;border-top:1px solid rgba(255,255,255,.22);font-size:13px;color:#FFD9D4}
+  aside .who b{display:block;color:#fff;font-family:var(--display);font-size:14.5px}
+
+  /* --- main --- */
+  main{padding:30px 34px 70px;max-width:1000px}
+  .demo{background:var(--yellow);color:var(--ink);font-family:var(--util);font-size:10.5px;
+        letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-radius:3px;
+        display:inline-block;font-weight:700;margin-bottom:18px}
+  .eyebrow{font-family:var(--util);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+        color:var(--red);font-weight:700;margin:0 0 5px}
+  h1{font-family:var(--display);font-size:28px;font-weight:800;margin:0 0 8px;letter-spacing:-.4px}
+  .lede{margin:0 0 24px;max-width:64ch;color:#4a4a4a}
+  .view{display:none}.view.on{display:block}
+
+  .card{background:#fff;border:1px solid var(--rule);border-radius:10px;padding:18px;margin-bottom:16px}
+  .card h2{font-family:var(--display);font-size:17px;margin:0 0 12px;font-weight:800}
+  .kicker{font-family:var(--util);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+        color:var(--mute);margin:0 0 3px}
+
+  /* girls list */
+  .girl{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--rule);
+        border-radius:9px;background:#fff;margin-bottom:9px;cursor:pointer;width:100%;text-align:left;
+        font-family:var(--body);font-size:15px;color:var(--ink)}
+  .girl:hover{border-color:var(--red)}
+  .girl .av{width:38px;height:38px;border-radius:50%;background:var(--tint);color:var(--red);
+        display:grid;place-items:center;font-family:var(--display);font-weight:800;flex:0 0 38px}
+  .girl .nm{flex:1}
+  .girl .nm b{display:block;font-family:var(--display);font-size:15.5px}
+  .girl .nm span{font-size:12.5px;color:var(--mute)}
+  .pill{font-family:var(--util);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+        padding:4px 9px;border-radius:20px;font-weight:700}
+  .pill.due{background:var(--sun);color:#8a6d00;border:1px solid var(--yellow)}
+  .pill.ok{background:var(--tint);color:var(--red)}
+  .pill.risk{background:var(--red);color:#fff}
+
+  .back{background:none;border:0;color:var(--red);font-family:var(--body);font-size:14px;
+        cursor:pointer;padding:0;margin-bottom:14px}
+
+  /* sync */
+  .sync{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+  .sync h3{font-family:var(--util);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+        margin:0 0 8px;color:var(--mute)}
+  .row{border:1px solid var(--rule);border-radius:8px;padding:10px 12px;margin-bottom:7px;background:#fff}
+  .row .lab{font-size:12px;color:var(--mute);margin:0 0 2px}
+  .row .val{margin:0;font-size:14.5px}
+  .diff{border-color:var(--yellow);background:var(--sun);box-shadow:inset 3px 0 0 var(--yellow)}
+  .flag{font-family:var(--util);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+        color:#9a7b00;font-weight:700;display:block;margin-top:5px}
+
+  .month{background:var(--sun);border:2px solid var(--yellow);border-radius:10px;padding:18px;margin-bottom:16px}
+  .month .kicker{color:#8a6d00}
+  .month h2{margin:0 0 10px;font-family:var(--display);font-size:17px}
+  .month ol{margin:0;padding-left:19px}.month li{margin-bottom:6px}
+  .month .why{margin:12px 0 0;font-size:13.5px;color:#6b5600;border-top:1px dashed #E3CE72;padding-top:10px}
+
+  .goal{margin-bottom:14px}
+  .goal .gt{display:flex;justify-content:space-between;gap:10px;font-size:14.5px;margin-bottom:5px}
+  .goal .gt span{font-family:var(--util);font-size:12px;color:var(--mute);white-space:nowrap}
+  .bar{height:8px;background:#F1E9E7;border-radius:5px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--red);border-radius:5px;transition:width .4s}
+
+  .log{list-style:none;margin:0;padding:0}
+  .log li{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid #F4EEEC;font-size:14px}
+  .log li:last-child{border-bottom:0}
+  .log time{font-family:var(--util);font-size:11.5px;color:var(--mute);white-space:nowrap;padding-top:2px}
+
+  .two{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:start}
+
+  label{display:block;font-size:13px;color:var(--mute);margin:0 0 5px}
+  textarea,select,input[type=text]{width:100%;font-family:var(--body);font-size:14.5px;padding:9px 11px;
+        border:1.5px solid var(--rule);border-radius:7px;background:#fff;color:var(--ink)}
+  textarea{min-height:78px;resize:vertical}
+  .btn{background:var(--red);color:#fff;border:0;border-radius:7px;padding:10px 18px;
+        font-family:var(--body);font-size:14.5px;font-weight:600;cursor:pointer}
+  .btn:hover{background:#d8341f}
+  .btn.ghost{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+  .saved{color:var(--red);font-size:13.5px;margin-left:10px}
+
+  /* training */
+  .mod{display:flex;gap:14px;align-items:flex-start;padding:14px;border:1px solid var(--rule);
+        border-radius:9px;background:#fff;margin-bottom:9px}
+  .mod .num{font-family:var(--util);font-size:12px;color:#fff;background:var(--red);width:26px;height:26px;
+        border-radius:50%;display:grid;place-items:center;flex:0 0 26px;font-weight:700}
+  .mod.done .num{background:var(--ink)}
+  .mod b{font-family:var(--display);font-size:15.5px;display:block}
+  .mod p{margin:3px 0 0;font-size:13.5px;color:#555}
+  .mod .st{font-family:var(--util);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+        color:var(--mute);white-space:nowrap;padding-top:4px}
+  .ring{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .ring .big{font-family:var(--display);font-size:34px;font-weight:800;color:var(--red)}
+
+  footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--rule);font-size:13px;color:var(--mute)}
+  @media(max-width:860px){
+    .app{grid-template-columns:1fr}
+    aside{padding:16px 0}nav{display:flex;overflow-x:auto;padding:8px 0}
+    nav button{white-space:nowrap;border-left:0;border-bottom:3px solid transparent}
+    nav button[aria-current="true"]{border-left-color:transparent;border-bottom-color:var(--yellow)}
+    aside .who{display:none}
+    main{padding:22px 18px 60px}
+    .sync,.two{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand"><b>Raising Girls</b><span>Mentor platform</span></div>
+    <nav>
+      <button aria-current="true" data-v="v1">My girls</button>
+      <button data-v="v2">Log a check-in</button>
+      <button data-v="v3">Mentor training</button>
+    </nav>
+    <div class="who"><b>Ngozi E.</b>Mentor · 4 girls · joined Dec 2026</div>
+  </aside>
+
+  <main>
+    <span class="demo">Demo · sample data</span>
+
+    <!-- ============ MY GIRLS ============ -->
+    <section class="view on" id="v1">
+      <div id="list">
+        <p class="eyebrow">Your girls</p>
+        <h1>Four girls, and where each one is</h1>
+        <p class="lede">You do not have to remember any of this. Open a girl and the plan is already there.</p>
+        <div id="girls"></div>
+      </div>
+
+      <div id="detail" style="display:none">
+        <button class="back" id="back">← All girls</button>
+        <p class="eyebrow" id="dEyebrow"></p>
+        <h1 id="dName"></h1>
+        <p class="lede">Where she and her parent agree, and — more usefully — where they don't.</p>
+        <div class="sync" id="sync"></div>
+        <div class="two">
+          <div>
+            <div class="month" id="month"></div>
+            <div class="card"><p class="kicker">2027 goals</p><h2>What she is working towards</h2>
+              <div id="goals"></div></div>
+          </div>
+          <div>
+            <div class="card"><p class="kicker">Check-ins</p><h2>Two minutes, twice a month</h2>
+              <ul class="log" id="log"></ul></div>
+            <div class="card"><p class="kicker">Parent view</p><h2>What her parent has confirmed</h2>
+              <ul class="log" id="tick"></ul></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CHECK-IN ============ -->
+    <section class="view" id="v2">
+      <p class="eyebrow">Check-in</p>
+      <h1>Log a check-in</h1>
+      <p class="lede">A check-in is not a call. Two or three minutes, against something specific she already agreed to.</p>
+      <div class="card">
+        <div style="margin-bottom:14px"><label for="ciGirl">Which girl</label>
+          <select id="ciGirl"></select></div>
+        <div style="margin-bottom:14px"><label for="ciWhat">What did you ask about?</label>
+          <select id="ciWhat"></select></div>
+        <div style="margin-bottom:14px"><label for="ciHow">How did it go?</label>
+          <select id="ciHow">
+            <option>She had done it</option>
+            <option>She had started</option>
+            <option>She had not started — something was in the way</option>
+            <option>Could not reach her</option>
+          </select></div>
+        <div style="margin-bottom:16px"><label for="ciNote">Anything worth remembering</label>
+          <textarea id="ciNote" placeholder="One or two lines. Her parent will not see this."></textarea></div>
+        <button class="btn" id="ciSave">Save check-in</button><span class="saved" id="ciMsg"></span>
+      </div>
+      <div class="card"><p class="kicker">Why this is short</p>
+        <p style="margin:0;font-size:14.5px;color:#555">Monthly calls were the only thing holding mentoring together, and a month is long enough for a girl to quietly stop. A check-in is deliberately small enough that nobody dreads it.</p></div>
+    </section>
+
+    <!-- ============ TRAINING ============ -->
+    <section class="view" id="v3">
+      <p class="eyebrow">Before you meet your first girl</p>
+      <h1>Mentor training</h1>
+      <p class="lede">Built for someone who has never mentored anyone. Nothing here assumes you have done this before.</p>
+      <div class="ring"><span class="big" id="tPct">38%</span>
+        <div style="flex:1"><div class="bar"><i id="tBar" style="width:38%"></i></div>
+        <p style="margin:6px 0 0;font-size:13px;color:var(--mute)" id="tCount">3 of 8 modules complete</p></div></div>
+      <div id="mods"></div>
+    </section>
+
+    <footer>Demo only. Girls, parents, ratings, check-ins and progress on this page are invented for illustration.</footer>
+  </main>
+</div>
+
+<script>
+const G={
+ adaeze:{n:"Adaeze O.",a:"12–14",s:"due",st:"Check-in due",
+  sync:[{l:"Finishes what she starts",g:"2 of 5",p:"4 of 5",d:1,f:"She rates herself far lower than her mother does"},
+        {l:"Confident speaking to a room",g:"4 of 5",p:"2 of 5",d:1,f:"She thinks she is confident. Her mother sees her shrink"},
+        {l:"Gets into trouble for",g:"Talking back, and her phone",p:"The phone, every day",d:0},
+        {l:"Wants help with",g:"Focus at school, and photography",p:"Her confidence",d:1,f:"They want different things from this year"},
+        {l:"Five-year direction",g:"Medicine. University undecided",p:"—",d:0}],
+  m:{t:"February — start with the gap, not the goal",
+     i:["Ask her to describe a time she spoke up and it went well. Do not correct her self-rating.",
+        "Agree one small public act for February: read at family devotion, once.",
+        "Set the photography goal properly — one subject, five pictures, by 28 February.",
+        "Confirm with her mother which two evenings work for check-ins."],
+     w:"Surfaced because girl and parent disagree most sharply on confidence, and her only self-rating below 3 is finishing things. February is deliberately small."},
+  goals:[["Choose a target university and find its entry requirements","0 of 3",8],
+         ["Take and show 5 photographs on one subject","2 of 5",40],
+         ["Read 4 books of the Bible each month","Feb: 3 of 4",70],
+         ["Speak once in front of a group unprompted","not started",0]],
+  log:[["6 Feb","Two minutes. Photographs not started. Asked what was in the way."],
+       ["21 Feb","Three taken. Subject agreed: her grandmother's hands."],
+       ["4 Mar","Missed. Rescheduled to the 6th."]],
+  tick:[["✓","Saw her working on the photographs"],["✓","Two check-in evenings agreed"],
+        ["—","Read at family devotion"],["✓","Phone rule discussed at home"]]},
+
+ hauwa:{n:"Hauwa B.",a:"15–17",s:"risk",st:"Goal at risk",
+  sync:[{l:"Knows what she wants after school",g:"5 of 5",p:"2 of 5",d:1,f:"She is certain. Her father is not convinced she has thought it through"},
+        {l:"Manages her own time",g:"4 of 5",p:"4 of 5",d:0},
+        {l:"Gets into trouble for",g:"Arguing",p:"Arguing, and late nights",d:0},
+        {l:"Wants help with",g:"Starting her business",p:"Her exams",d:1,f:"Business versus exams. This needs naming out loud"},
+        {l:"Five-year direction",g:"Fashion, and her own label",p:"—",d:0}],
+  m:{t:"February — hold both, choose neither",
+     i:["Name the tension: she wants the business, her father wants the exams.",
+        "Agree a rule she sets herself for when business work stops each night.",
+        "One costing exercise: what does one finished piece actually cost?",
+        "Ask her father to confirm the nightly cut-off in the parent view."],
+     w:"Flagged because girl and parent want opposite things from the year. Left alone this becomes a fight in April."},
+  goals:[["Price and make 3 finished pieces","1 of 3",33],
+         ["Keep a weekly study block, unmissed","5 of 12 weeks",42],
+         ["Read 4 books of the Bible each month","Feb: 4 of 4",100],
+         ["Open a record of money in and out","done",100]],
+  log:[["8 Feb","Talked about the cut-off. She proposed 9:30pm herself."],
+       ["19 Feb","Kept it four nights of five. Father confirmed."],
+       ["3 Mar","First piece finished and costed."]],
+  tick:[["✓","Nightly cut-off agreed"],["✓","Saw the first finished piece"],
+        ["✓","Study block kept this week"],["—","Reviewed exam timetable together"]]},
+
+ zainab:{n:"Zainab A.",a:"9–11",s:"ok",st:"On track",
+  sync:[{l:"Makes friends easily",g:"5 of 5",p:"2 of 5",d:1,f:"The widest gap here. Go gently"},
+        {l:"Finishes what she starts",g:"3 of 5",p:"3 of 5",d:0},
+        {l:"Gets into trouble for",g:"Nothing really",p:"Shouting at her younger brother",d:1,f:"She does not report what her mother reports"},
+        {l:"Wants help with",g:"Drawing better",p:"How she handles being upset",d:1,f:"Start where the girl is. Get to the second thing later"},
+        {l:"Five-year direction",g:"An artist",p:"—",d:0}],
+  m:{t:"March — start with the drawing",
+     i:["Do not open with the shouting. Open with the drawing.",
+        "One drawing a week for four weeks, her choice of subject.",
+        "Introduce naming feelings through what she draws, not a talk about behaviour.",
+        "Ask her mother to note, without commenting, when a hard moment passes well."],
+     w:"Flagged because the girl reports no problem where the parent reports a daily one. At this age the route in is the thing she already loves."},
+  goals:[["Four drawings, four weeks","1 of 4",25],
+         ["Read 3 books of the Bible each month","Mar: 1 of 3",33],
+         ["Name the feeling before reacting, once a week","not started",0]],
+  log:[["3 Mar","First call. Mostly drawing. She talked for nine minutes."],
+       ["17 Mar","One drawing done. Did not raise the brother."]],
+  tick:[["✓","Saw the first drawing"],["—","Noted a hard moment passing well"],["—","Reading started"]]},
+
+ blessing:{n:"Blessing U.",a:"6–8",s:"due",st:"Check-in due",
+  sync:[{l:"Listens the first time",g:"4 of 5",p:"2 of 5",d:1,f:"Standard at this age. Worth telling her mother that"},
+        {l:"Likes reading",g:"5 of 5",p:"5 of 5",d:0},
+        {l:"Gets into trouble for",g:"Being loud",p:"Not listening",d:0},
+        {l:"Wants help with",g:"Reading harder books",p:"Doing what she is asked first time",d:1,f:"Use the reading to get to the listening"},
+        {l:"Five-year direction",g:"A teacher",p:"—",d:0}],
+  m:{t:"March — use what she already loves",
+     i:["Let her choose the book. Every time.",
+        "One page read aloud to her mother each night, her idea to offer it.",
+        "Praise the offering, not the reading.",
+        "Ask her mother to tick the nights it happened without a reminder."],
+     w:"She and her mother agree completely on reading and disagree completely on listening. Reading is the way in."},
+  goals:[["Read 2 books of the Bible each month","Mar: 2 of 2",100],
+         ["Read aloud to Mum, unprompted, 3 nights a week","2 of 3",66]],
+  log:[["10 Mar","Very short. She wanted to tell me about a book."]],
+  tick:[["✓","Read aloud two nights"],["—","Offered without a reminder"]]}
+};
+
+const MODULES=[
+ [1,"What mentoring actually is","And what it is not. Why a girl needs one, in words you can say to her.",1],
+ [2,"Before the first call","Reading her onboarding and her parent's answers. What the gaps mean.",1],
+ [3,"The first call","How to open, what to ask, and what not to fix on day one.",1],
+ [4,"Running a month","The monthly cycle: plan, check in, adjust, record. What the platform does for you.",0],
+ [5,"When she goes quiet","Missed check-ins, one-word answers, and what to do before escalating.",0],
+ [6,"Working with her parent","The parent view, what they see, and how to handle a parent who wants more than the plan.",0],
+ [7,"Safeguarding and boundaries","What you must escalate immediately, to whom, and how to say it to her.",0],
+ [8,"Closing out a goal","Marking it done, and helping her feel it. Ending the year well.",0]
+];
+
+const gi=document.getElementById('girls');
+Object.keys(G).forEach(k=>{
+  const g=G[k];
+  const b=document.createElement('button');
+  b.className='girl';
+  b.innerHTML=`<span class="av">${g.n[0]}</span><span class="nm"><b>${g.n}</b>
+    <span>Age group ${g.a} · ${g.goals.length} goals</span></span>
+    <span class="pill ${g.s}">${g.st}</span>`;
+  b.onclick=()=>open_(k);
+  gi.appendChild(b);
+});
+
+function open_(k){
+  const g=G[k];
+  document.getElementById('list').style.display='none';
+  document.getElementById('detail').style.display='block';
+  document.getElementById('dEyebrow').textContent='Age group '+g.a;
+  document.getElementById('dName').textContent=g.n;
+  document.getElementById('sync').innerHTML=
+   `<div><h3>What she said about herself</h3>${g.sync.map(r=>
+     `<div class="row${r.d?' diff':''}"><p class="lab">${r.l}</p><p class="val">${r.g}</p></div>`).join('')}</div>
+    <div><h3>What her parent said</h3>${g.sync.map(r=>
+     `<div class="row${r.d?' diff':''}"><p class="lab">${r.l}</p><p class="val">${r.p}</p>
+      ${r.f?`<span class="flag">${r.f}</span>`:''}</div>`).join('')}</div>`;
+  document.getElementById('month').innerHTML=
+   `<p class="kicker">This month — generated from her plan</p><h2>${g.m.t}</h2>
+    <ol>${g.m.i.map(x=>`<li>${x}</li>`).join('')}</ol><p class="why">${g.m.w}</p>`;
+  document.getElementById('goals').innerHTML=g.goals.map(([t,s,p])=>
+   `<div class="goal"><div class="gt"><b>${t}</b><span>${s}</span></div>
+    <div class="bar"><i style="width:${p}%"></i></div></div>`).join('');
+  document.getElementById('log').innerHTML=g.log.map(([d,t])=>
+   `<li><time>${d}</time><span>${t}</span></li>`).join('');
+  document.getElementById('tick').innerHTML=g.tick.map(([m,t])=>
+   `<li><time>${m}</time><span>${t}</span></li>`).join('');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.getElementById('back').onclick=()=>{
+  document.getElementById('detail').style.display='none';
+  document.getElementById('list').style.display='block';
+};
+
+const sel=document.getElementById('ciGirl'), what=document.getElementById('ciWhat');
+Object.keys(G).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=G[k].n;sel.appendChild(o);});
+function fillWhat(){
+  what.innerHTML='';
+  G[sel.value].goals.forEach(([t])=>{const o=document.createElement('option');o.textContent=t;what.appendChild(o);});
+}
+sel.onchange=fillWhat; fillWhat();
+document.getElementById('ciSave').onclick=()=>{
+  const m=document.getElementById('ciMsg');
+  m.textContent='Saved. Her parent sees that a check-in happened, not what was said.';
+  setTimeout(()=>m.textContent='',5000);
+  document.getElementById('ciNote').value='';
+};
+
+let done=MODULES.filter(m=>m[3]).length;
+function paintMods(){
+  document.getElementById('mods').innerHTML=MODULES.map(([n,t,d,c])=>
+   `<div class="mod${c?' done':''}"><span class="num">${n}</span>
+     <span style="flex:1"><b>${t}</b><p>${d}</p></span>
+     <span class="st">${c?'Complete':'Not started'}</span></div>`).join('');
+  const pct=Math.round(done/MODULES.length*100);
+  document.getElementById('tPct').textContent=pct+'%';
+  document.getElementById('tBar').style.width=pct+'%';
+  document.getElementById('tCount').textContent=done+' of '+MODULES.length+' modules complete';
+}
+paintMods();
+
+document.querySelectorAll('nav button').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-current','false'));
+    b.setAttribute('aria-current','true');
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+    document.getElementById(b.dataset.v).classList.add('on');
+    window.scrollTo({top:0});
+  };
+});
+</script>
+</body>
+</html>
